@@ -5,6 +5,7 @@ const ACTIONS = {
     MAKE_REQUEST: 'make-request',
     GET_DATA: 'get-data',
     ERROR: 'error',
+    UPATE_HAS_NEXT_PAGE: 'hasNextPage'
 }
 const reducer = (state, action) => {
     switch (action.type) {
@@ -14,6 +15,8 @@ const reducer = (state, action) => {
             return { ...state, loading: false, jobs: action.payload.jobs };
         case ACTIONS.ERROR:
             return { ...state, loading: false, error: action.payload.eror, jobs: [] };
+        case ACTIONS.UPATE_HAS_NEXT_PAGE:
+            return { ...state, hasNextPage: action.payload.hasNextPage };
         default:
             return state;
     }
@@ -36,8 +39,25 @@ export default function useFetchJobs(params, page) {
                 return;
             dispatch({ type: ACTIONS.ERROR, payload: { jobs: e } });
         })
+
+        const cancelToken2 = axios.CancelToken.source();
+        axios.get(BASE_URL, {
+            cancelToken: cancelToken2.token,
+            params: { markdown: true, page: page + 1, ...params },
+
+        }).then(res => {
+            dispatch({ type: ACTIONS.UPATE_HAS_NEXT_PAGE, payload: { hasNextPage: res.data.length > 0 } });
+        }).catch(e => {
+            if (axios.isCancel(e))
+                return;
+            dispatch({ type: ACTIONS.ERROR, payload: { jobs: e } });
+        })
+
+
+
         return () => {
             cancelToken1.cancel()
+            cancelToken2.cancel()
         }
     }, [params, page])
     return {
