@@ -18,7 +18,7 @@ const reducer = (state, action) => {
             return state;
     }
 }
-const BASE_URL = 'https://cors-anywhere.herokuapp.com/https://jobs.github.com/positions.json';
+const BASE_URL = 'https://jobs.github.com/positions.json';
 export default function useFetchJobs(params, page) {
     const [state, dispatch] = useReducer(reducer, { jobs: [], loading: true });
 
@@ -26,8 +26,9 @@ export default function useFetchJobs(params, page) {
         const cancelToken1 = axios.CancelToken.source();
         dispatch({ type: ACTIONS.MAKE_REQUEST });
         axios.get(BASE_URL, {
-            params: { markdown: true, page: page, ...params },
             cancelToken: cancelToken1.token,
+            params: { markdown: true, page: page, ...params },
+
         }).then(res => {
             dispatch({ type: ACTIONS.GET_DATA, payload: { jobs: res.data } });
         }).catch(e => {
