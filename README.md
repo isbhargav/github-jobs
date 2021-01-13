@@ -1,7 +1,12 @@
 
 ## Link :  https://isbhargav.github.io/github-jobs/
 This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
+
+## Demo
+
 ![Image](/github_jobs.gif)
+
+
 ## Available Scripts
 
 In the project directory, you can run:
